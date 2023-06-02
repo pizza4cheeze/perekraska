@@ -26,6 +26,7 @@ class SettingsWindow(QMainWindow):
     def closeEvent(self, event):
         self.game_window.settings_window = None
         super().closeEvent(event)
+        game.change_max_moves(self.game_window.max_moves)
 
     def slider_value_changed(self, value):
         self.game_window.max_moves = value
@@ -33,15 +34,15 @@ class SettingsWindow(QMainWindow):
 
 
 class GameWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, max_moves):
         super().__init__()
         self.board_size = 12
         self.colors = ['red', 'green', 'blue', 'yellow', 'magenta', 'cyan']
         self.board = np.random.choice(self.colors, (self.board_size, self.board_size))
         self.buttons = []
         self.move_count = 0
-        self.max_moves = 22
-        self.best_score = 22
+        self.max_moves = max_moves
+        self.best_score = max_moves
         self.row_indent = 50
         self.move_in_progress = False
         self.settings_window = None
@@ -49,6 +50,10 @@ class GameWindow(QMainWindow):
         self.init_menu()
 
         self.update_ui()
+
+    def change_max_moves(self, max_moves):
+        self.close()
+        self.__init__(max_moves)
 
     def init_ui(self):
         self.setWindowTitle('Перекрась')
@@ -171,5 +176,5 @@ class GameWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication([])
-    game = GameWindow()
+    game = GameWindow(22)
     app.exec()
